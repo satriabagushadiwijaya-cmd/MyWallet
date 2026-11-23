@@ -1,0 +1,19 @@
+{
+  "name": "Dompetku",
+  "short_name": "Dompetku",
+  "categories": ["finance", "productivity"],
+  "description": "Pencatat keuangan pribadi yang bisa dipakai offline",
+  "lang": "id",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D1012",
+  "theme_color": "#0D1012",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
