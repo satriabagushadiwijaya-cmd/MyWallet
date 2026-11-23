@@ -502,6 +502,47 @@ nav.bottom button.on svg .a{fill:var(--gold)}
 .list{border-radius:22px}
 .day{margin:20px 6px 8px}
 
+.wt.img{background:#fff;overflow:hidden;padding:0}
+.wt.img img{width:100%;height:100%;object-fit:cover;display:block}
+.wt.img.fit img{object-fit:contain}
+.wt.lg{width:72px;height:72px;border-radius:20px;font-size:32px}
+.wt.lg.txt{font-size:20px}
+.wt.sm{width:28px;height:28px;border-radius:8px;font-size:15px}
+.wt.sm.txt{font-size:9.5px}
+.logo-edit{display:flex;align-items:center;gap:16px}
+.logo-btns{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.btn.small{width:auto;margin:0;padding:10px 16px;font-size:14.5px;display:inline-block;cursor:pointer}
+.linkbtn{color:var(--red);font-weight:600;font-size:14px;padding:2px 2px}
+.wchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.wchips::-webkit-scrollbar{display:none}
+.wchips button{flex:none;display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border-radius:14px;background:var(--surface-2);border:2px solid transparent;font-weight:600;font-size:14px;white-space:nowrap}
+.wchips button.on{border-color:var(--sage);background:var(--sage-soft)}
+.item .av{position:relative}
+.wbadge{position:absolute;right:-4px;bottom:-4px;width:18px;height:18px;border-radius:6px;object-fit:cover;background:#fff;box-shadow:0 0 0 2px var(--surface)}
+.sheet-top{position:sticky;top:-10px;z-index:3;margin:-10px -18px 4px;padding:10px 18px 6px;background:var(--surface);display:flex;justify-content:center;align-items:center;min-height:34px;touch-action:none;cursor:grab}
+.sheet-top .grab{margin:0;width:44px;height:5px}
+.sheet-x{position:absolute;right:12px;top:8px;width:34px;height:34px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;color:var(--muted)}
+.sheet-x svg{width:16px;height:16px}
+.sheet{overscroll-behavior:contain;will-change:transform}
+.row2>.field{min-width:0}
+input[type=date].inp{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;min-height:48px;text-align:left;line-height:1.3}
+input[type=date].inp::-webkit-date-and-time-value{text-align:left}
+.hero .big{margin-bottom:4px}
+.origin{display:inline-flex;white-space:nowrap;max-width:100%;overflow:hidden;align-items:center;gap:4px;font-size:13.5px;color:rgba(255,255,255,.88);padding:4px 10px;margin:0 0 16px -2px;border-radius:999px;background:rgba(255,255,255,.12);text-align:left}
+.origin b{color:#fff;font-weight:700}
+.bd{margin-top:14px;border:1px solid var(--line);border-radius:20px;padding:6px 16px}
+.bd-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0}
+.bd-row span{display:flex;flex-direction:column;font-weight:600}
+.bd-row small{font-size:12px;color:var(--muted);font-weight:500}
+.bd-row b{font-size:16px;white-space:nowrap}
+.bd-base{color:var(--blue)}
+.bd-sep{height:1px;background:var(--line);margin:2px 0}
+.bd-total{display:flex;justify-content:space-between;align-items:center;padding:12px 0 8px;margin-top:4px;border-top:2px solid var(--text);font-weight:800}
+.bd-total b{font-size:18px}
+.bd-w{display:flex;align-items:center;gap:10px;padding:9px 2px;font-size:14px}
+.bd-w+.bd-w{border-top:1px solid var(--line)}
+.bd-w .nm{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bd-w .ar{color:var(--muted)}
 @keyframes up{from{transform:translateY(40px);opacity:0}}
 @keyframes fade{from{opacity:0}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -524,7 +565,8 @@ const KEY = 'dompetku-v1';
 const $ = s => document.querySelector(s);
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const rp = (n, hide) => hide ? 'Rp•••••' : (n < 0 ? '-' : '') + 'Rp' + Math.round(Math.abs(n)).toLocaleString('id-ID');
+// only balances are masked when "Sembunyikan saldo" is on; pass 'bal' for a balance
+const rp = (n, kind) => kind === 'bal' && S.settings.hide ? 'Rp•••••' : (n < 0 ? '-' : '') + 'Rp' + Math.round(Math.abs(n)).toLocaleString('id-ID');
 const short = n => { const a = Math.abs(n); return a >= 1e9 ? (n/1e9).toFixed(1).replace('.',',')+'M' : a >= 1e6 ? (n/1e6).toFixed(1).replace('.',',')+'jt' : a >= 1e3 ? Math.round(n/1e3)+'rb' : String(Math.round(n)); };
 const pad = n => String(n).padStart(2, '0');
 const isoDay = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -690,7 +732,7 @@ function calendar() {
   let cells = DAYS.map(d => `<div style="font-size:11px;color:var(--muted);text-align:center;font-weight:700">${d}</div>`).join('');
   for (let i = 0; i < first; i++) cells += '<div></div>';
   for (let d = 1; d <= n; d++) { const iso = `${ui.month}-${pad(d)}`, v = byDay[iso] || 0;
-    cells += `<div style="aspect-ratio:1;border-radius:10px;background:${v ? `color-mix(in srgb, var(--red) ${20 + v/max*60}%, var(--surface-2))` : 'var(--surface-2)'};display:flex;flex-direction:column;align-items:center;justify-content:center;${iso===today()?'outline:2px solid var(--sage)':''}"><span style="font-size:12px;font-weight:700">${d}</span>${v?`<span style="font-size:9px" class="num">${S.settings.hide?'•':short(v)}</span>`:''}</div>`; }
+    cells += `<div style="aspect-ratio:1;border-radius:10px;background:${v ? `color-mix(in srgb, var(--red) ${20 + v/max*60}%, var(--surface-2))` : 'var(--surface-2)'};display:flex;flex-direction:column;align-items:center;justify-content:center;${iso===today()?'outline:2px solid var(--sage)':''}"><span style="font-size:12px;font-weight:700">${d}</span>${v?`<span style="font-size:9px" class="num">${short(v)}</span>`:''}</div>`; }
   return `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px">${cells}</div>`;
 }
 
@@ -713,6 +755,7 @@ function txRow(t) {
     title = t.note || c.name; sub = `${esc(c.name)} · ${esc(wal(t.walletId)?.name||'?')}`;
     amt = (t.type === 'income' ? '+' : '-') + rp(t.amount, hide); cls = t.type === 'income' ? 'pos' : 'neg';
   }
+  const wl = wal(t.walletId); if (wl && wl.logo) av = av.replace(/<\/div>$/, `<img class="wbadge" src="${wl.logo}" alt=""></div>`);
   return `<button class="item" data-act="edittx" data-id="${t.id}">${av}<div class="mid"><div class="t">${esc(title)}</div><div class="s">${t.biz ? '<span class="tag biz" style="margin:0 4px 0 0">Usaha</span>' : ''}${sub}</div></div><div class="amt num ${cls}">${amt}</div></button>`;
 }
 
@@ -743,8 +786,9 @@ function viewTx() {
     ${installBanner()}
     ${monthPicker()}
     <section class="hero">
-      <div class="hero-top"><div class="hero-l"><div class="lbl">Total saldo${ui.wallet !== 'all' ? ' · ' + esc(wal(ui.wallet)?.name) : ''}</div><div class="big num">${rp(totalBalance(ui.wallet), hide)}</div></div>
-        <div class="hero-btns"><button data-act="go" data-tab="acct" data-acct="net" aria-label="Kekayaan bersih" class="gold">${I.trophy}</button><button data-act="hide" aria-label="Sembunyikan nominal">${hide ? I.eyeoff : I.eye}</button></div></div>
+      <div class="hero-top"><div class="hero-l"><div class="lbl">Total saldo${ui.wallet !== 'all' ? ' · ' + esc(wal(ui.wallet)?.name) : ''}</div><div class="big num">${rp(totalBalance(ui.wallet), 'bal')}</div></div>
+        <div class="hero-btns"><button data-act="go" data-tab="acct" data-acct="net" aria-label="Kekayaan bersih" class="gold">${I.trophy}</button><button data-act="hide" aria-label="Sembunyikan saldo">${hide ? I.eyeoff : I.eye}</button></div></div>
+      ${(() => { const [a, b] = monthRange(ui.month), r = breakdown(ui.wallet, a, b), net = r.end - r.start; return `<button class="origin" data-act="breakdown">Awal ${MONTHS[+ui.month.slice(5) - 1]} <b class="num">${rp(r.start, 'bal')}</b> · ${net ? `<b class="num">${net > 0 ? '+' : '−'}${rp(Math.abs(net), hide)}</b>` : 'belum ada perubahan'} ›</button>`; })()}
       <div class="row">
         <div class="cell"><span class="ci up">${I.up}</span><span><small>Pemasukan</small><b class="num">${rp(inc, hide)}</b></span></div>
         <div class="cell"><span class="ci dn">${I.dn}</span><span><small>Pengeluaran</small><b class="num">${rp(exp, hide)}</b></span></div>
@@ -810,11 +854,11 @@ function viewDash() {
     ${nudgeCard()}
     <section class="hero safe">
       <div class="safe-top"><div><div class="eyebrow light">Aman dibelanjakan hari ini</div>
-        <div class="big num">${rp(Math.max(0, left), hide)}</div>
+        <div class="big num">${rp(Math.max(0, left), 'bal')}</div>
         <div class="sub">per hari sampai ${DAYS[pd.date.getDay()]}, ${pd.date.getDate()} ${MONTHS[pd.date.getMonth()]}</div></div>
         <div class="illu" aria-hidden="true"><span class="i1">🗓️</span><span class="i2">🪙</span><span class="i3">✅</span></div></div>
-      <div class="safe-bar"><div class="bar"><i style="width:${pct}%"></i></div><span class="num">${left < 0 ? 'Lewat ' + rp(-left, hide) : rp(spentToday, hide) + ' terpakai hari ini'}</span></div>
-      <div class="tri"><div><small>Sampai gajian</small><b class="num">${rp(free, hide)}</b></div><div><small>${billsDue ? 'Tagihan' : 'Tanpa tagihan'}</small><b class="num">${rp(billsDue, hide)}</b></div><div><small>Untuk target</small><b class="num">${rp(saved, hide)}</b></div></div>
+      <div class="safe-bar"><div class="bar"><i style="width:${pct}%"></i></div><span class="num">${left < 0 ? 'Lewat ' + rp(-left, 'bal') : rp(spentToday, hide) + ' terpakai hari ini'}</span></div>
+      <div class="tri"><div><small>Sampai gajian</small><b class="num">${rp(free, 'bal')}</b></div><div><small>${billsDue ? 'Tagihan' : 'Tanpa tagihan'}</small><b class="num">${rp(billsDue, hide)}</b></div><div><small>Untuk target</small><b class="num">${rp(saved, hide)}</b></div></div>
     </section>
     ${Object.keys(S.budgets).length ? budgetCard() : rowCard('budgets', I.pie, 'Belum ada budget', 'Buat budget pertama untuk mengendalikan pengeluaran dan mencapai tujuan keuanganmu')}
     ${pathCard()}
@@ -837,7 +881,7 @@ function donut(entries, total) {
   if (!total) return `<div class="nodata">Belum ada data</div>`;
   const R = 52, C = 2 * Math.PI * R; let off = 0;
   const segs = entries.map(([id, v]) => { const len = v / total * C; const s = `<circle r="${R}" cx="70" cy="70" fill="none" stroke="${cat(id).color}" stroke-width="26" stroke-dasharray="${len} ${C - len}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"/>`; off += len; return s; }).join('');
-  return `<svg viewBox="0 0 140 140" class="donut">${segs}<text x="70" y="75" text-anchor="middle" font-size="15" font-weight="800" fill="var(--text)">${S.settings.hide ? '•••' : short(total)}</text></svg>`;
+  return `<svg viewBox="0 0 140 140" class="donut">${segs}<text x="70" y="75" text-anchor="middle" font-size="15" font-weight="800" fill="var(--text)">${short(total)}</text></svg>`;
 }
 function catBreakdown(type, list) {
   const hide = S.settings.hide, total = sumType(list, type);
@@ -857,7 +901,7 @@ function viewOv() {
   return `<header class="top"><h1>Ringkasan</h1>${walletPill()}</header>${monthPicker()}
     <div class="modes">${modes.map(([k, ic, l]) => `<button class="${ui.ovMode === k ? 'on' : ''}" data-act="ov" data-m="${k}">${ic}${l}</button>`).join('')}</div>
     ${ui.ovMode === 'biz' ? bizView() : ui.ovMode === 'cal' ? `<div class="card"><div class="head"><h2 class="h2b">Pengeluaran harian</h2><b class="num">${rp(e, hide)}</b></div>${calendar()}</div>` : `
-    <div class="card"><div class="head"><h2 class="h2b">Tren belanja</h2><span class="avgpill num">Rerata ${hide ? '•••' : short(avg)}/bln</span>
+    <div class="card"><div class="head"><h2 class="h2b">Tren belanja</h2><span class="avgpill num">Rerata ${short(avg)}/bln</span>
       <div class="tog"><button class="${ui.trendBars ? 'on' : ''}" data-act="trend" data-k="1" aria-label="Grafik batang">${I.bars}</button><button class="${ui.trendBars ? '' : 'on'}" data-act="trend" data-k="0" aria-label="Grafik garis">${I.line}</button></div></div>
       <div class="chart-wrap" style="margin-top:22px">${trendChart(months)}</div>
       <div class="cmp"><div><span class="muted">${I.history}Bulan lalu</span><b class="num">${rp(pe, hide)}</b></div><span class="cmp-ar">${I.arrow}</span><div><span class="muted">${I.cal}Bulan ini</span><b class="num">${rp(e, hide)}</b></div></div>
@@ -901,11 +945,30 @@ function subnav() {
   return `<div class="subnav">${items.map(([k, e, l]) => `<button class="${ui.acct === k ? 'on' : ''}" data-act="acct" data-k="${k}"><span>${e}</span>${l}</button>`).join('')}</div>`;
 }
 const initials = n => esc(String(n).replace(/[^\p{L}\p{N} ]/gu, '').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 3).toUpperCase() || '?');
-function walletTile(w) {
-  if (w.type === 'cash') return `<span class="wt" style="background:var(--surface-2)">👛</span>`;
-  const col = w.type === 'ewallet' ? '#C9962E' : ['#2F6FB0', '#1F4E9C', '#2C7A6B', '#7A4FB0', '#B0472F'][[...w.name].reduce((a, c) => a + c.charCodeAt(0), 0) % 5];
-  return `<span class="wt txt" style="background:${col}">${initials(w.name)}</span>`;
+const TILE_COLORS = ['#2F6FB0','#1F4E9C','#2C7A6B','#4E8B5F','#7A4FB0','#B0472F','#C9962E','#D0611F','#3B4450'];
+function walletTile(w, cls = '') {
+  if (w.logo) return `<span class="wt img ${w.logoFit === 'contain' ? 'fit' : ''} ${cls}"><img src="${w.logo}" alt=""></span>`;
+  if (w.type === 'cash' && !w.color) return `<span class="wt ${cls}" style="background:var(--surface-2)">👛</span>`;
+  const col = w.color || (w.type === 'ewallet' ? '#C9962E' : TILE_COLORS.slice(0, 5)[[...w.name].reduce((a, c) => a + c.charCodeAt(0), 0) % 5]);
+  return `<span class="wt txt ${cls}" style="background:${col}">${initials(w.name || '?')}</span>`;
 }
+function loadImage(src) { return new Promise((ok, no) => { const im = new Image(); im.onload = () => ok(im); im.onerror = no; im.src = src; }); }
+async function shrinkSource(src) {
+  const im = await loadImage(src), M = 320, sc = Math.min(1, M / Math.max(im.width, im.height));
+  const c = document.createElement('canvas'); c.width = Math.round(im.width * sc); c.height = Math.round(im.height * sc);
+  c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+  const webp = c.toDataURL('image/webp', .9); return webp.startsWith('data:image/webp') ? webp : c.toDataURL('image/png');
+}
+async function makeLogo(src, fit) {
+  const im = await loadImage(src), N = 160, c = document.createElement('canvas'); c.width = c.height = N;
+  const g = c.getContext('2d'); g.imageSmoothingQuality = 'high';
+  const sc = fit === 'contain' ? Math.min(N / im.width, N / im.height) * .82 : Math.max(N / im.width, N / im.height);
+  if (fit === 'contain') { g.fillStyle = '#fff'; g.fillRect(0, 0, N, N); }
+  const w = im.width * sc, h = im.height * sc; g.drawImage(im, (N - w) / 2, (N - h) / 2, w, h);
+  const webp = c.toDataURL('image/webp', .88);
+  return webp.startsWith('data:image/webp') ? webp : c.toDataURL('image/png');
+}
+
 function wealthLevel() {
   const first = S.tx.filter(t => t.type === 'expense').reduce((m, t) => t.date < m ? t.date : m, '9999');
   const lastMonth = shiftYm(ymOf(today()), -1);
@@ -930,32 +993,32 @@ function viewAcct() {
     });
     const mx = Math.max(1, ...months.map(x => Math.abs(x.v)));
     head = `<header class="top center"><span class="hsp"></span><h1>Akun</h1><span class="hsp"></span></header>
-      <div class="bignum num">${rp(nw, hide)}</div>
+      <div class="bignum num">${rp(nw, 'bal')}</div>
       <div class="chg ${diff < 0 ? 'neg' : 'pos'} num">${diff < 0 ? '▾' : '▴'} ${diff < 0 ? '-' : '+'}${rp(Math.abs(diff), hide).replace('-', '')} ${diff < 0 ? '' : '+'}${pct.toFixed(1).replace('.', ',')}% <span class="muted">${ui.range || '1B'}</span></div>
       <div class="cap">Kekayaan bersih</div>${rangeTabs()}${areaChart(vals)}`;
     body = `<div class="lvl"><span class="lvl-ic">🏆</span><span><b>${lv ? 'Level kekayaan: ' + lv.name : 'Level kekayaanmu'}</b><span>${lv ? lv.desc : 'Catat pengeluaran selama satu bulan penuh dan levelmu muncul di sini.'}</span></span></div>
-      <div class="tri3"><div><small>Total saldo</small><b class="num" style="color:var(--blue)">${rp(b, hide)}</b></div><div><small>Total aset</small><b class="num pos">${rp(a + dl, hide)}</b></div><div><small>Total utang</small><b class="num neg">-${rp(db, hide).replace('-', '')}</b></div></div>
+      <div class="tri3"><div><small>Total saldo</small><b class="num" style="color:var(--blue)">${rp(b, 'bal')}</b></div><div><small>Total aset</small><b class="num pos">${rp(a + dl, 'bal')}</b></div><div><small>Total utang</small><b class="num neg">-${rp(db, hide).replace('-', '')}</b></div></div>
       <div class="stack"><i style="flex:${b / gross};background:var(--blue)"></i><i style="flex:${(a + dl) / gross};background:var(--sage)"></i><i style="flex:${db / gross};background:var(--red)"></i></div>
       <div class="slegend"><span><i style="background:var(--blue)"></i>Dompet ${Math.round(b / gross * 100)}%</span><span><i style="background:var(--sage)"></i>Aset ${Math.round((a + dl) / gross * 100)}%</span><span><i style="background:var(--red)"></i>Utang ${Math.round(db / gross * 100)}%</span></div>
       <div class="head" style="margin-top:22px"><h2 class="h2b big2">Kekayaan bersih</h2><span class="muted">Bulanan</span></div>
       <div class="mbars">${months.map((x, i) => `<div class="${i === 5 ? 'on' : ''}"><small class="num">${hide ? '•' : short(x.v)}</small><i style="height:${Math.max(8, Math.abs(x.v) / mx * 70)}px"></i><span>${MONTHS[+x.m.slice(5) - 1]}</span></div>`).join('')}</div>`;
   } else if (ui.acct === 'wallet') {
     head = `<header class="top center"><span class="hsp"></span><h1>Akun</h1>${settingsBtn}</header>
-      <div class="bignum num sm">${rp(totalBalance(), hide)}</div>
+      <div class="bignum num sm">${rp(totalBalance(), 'bal')}</div>
       <div class="cap">Total saldo tersedia · ${S.wallets.length} dompet</div>${rangeTabs()}${areaChart(series('bal'))}`;
     const cur = ymOf(today());
     const change = w => { const l = txIn(cur, w.id); return l.reduce((a, t) => a + (t.type === 'income' && t.walletId === w.id ? t.amount : t.type === 'expense' && t.walletId === w.id ? -t.amount : t.type === 'adjust' && t.walletId === w.id ? t.amount : t.type === 'transfer' ? (t.toWalletId === w.id ? t.amount : t.walletId === w.id ? -t.amount : 0) : 0), 0); };
-    const row = w => { const c = change(w); return `<button class="wrow" data-act="editwallet" data-id="${w.id}">${walletTile(w)}<span class="wn"><b>${esc(w.name)}</b><span>IDR <em>${WTYPES[w.type].label}</em></span></span><b class="wb num">${rp(walletBalance(w), hide)}</b><span class="wc num ${c > 0 ? 'pos' : c < 0 ? 'neg' : 'muted'}">${c ? (c > 0 ? '+' : '') + short(c) : '—'}</span></button>`; };
-    const card = w => `<button class="wcard" data-act="editwallet" data-id="${w.id}">${walletTile(w)}<b>${esc(w.name)}</b><span class="num">${rp(walletBalance(w), hide)}</span></button>`;
+    const row = w => { const c = change(w); return `<button class="wrow" data-act="editwallet" data-id="${w.id}">${walletTile(w)}<span class="wn"><b>${esc(w.name)}</b><span>IDR <em>${WTYPES[w.type].label}</em></span></span><b class="wb num">${rp(walletBalance(w), 'bal')}</b><span class="wc num ${c > 0 ? 'pos' : c < 0 ? 'neg' : 'muted'}">${c ? (c > 0 ? '+' : '') + short(c) : '—'}</span></button>`; };
+    const card = w => `<button class="wcard" data-act="editwallet" data-id="${w.id}">${walletTile(w)}<b>${esc(w.name)}</b><span class="num">${rp(walletBalance(w), 'bal')}</span></button>`;
     const groups = ui.wgroup === false ? [['', '', S.wallets]] : Object.entries(WTYPES).map(([k, t]) => [t.label, t.color, S.wallets.filter(w => w.type === k)]).filter(g => g[2].length);
     body = `<div class="head"><h2 class="h2b big2">Dompet</h2><span class="ptools"><button class="${ui.wgroup === false ? '' : 'on'} dotsb" data-act="wgroup" aria-label="Kelompokkan">${I.dots}</button><span class="tog"><button class="${ui.wview === 'grid' ? 'on' : ''}" data-act="wview" data-k="grid" aria-label="Kotak">${I.grid}</button><button class="${ui.wview === 'grid' ? '' : 'on'}" data-act="wview" data-k="list" aria-label="Daftar">${I.list}</button></span></span></div>
-      ${ui.wview === 'grid' ? groups.map(([l, c, ws]) => `${l ? `<div class="ghead"><span><i style="background:${c}"></i>${l}</span><b class="num">${rp(ws.reduce((a, w) => a + walletBalance(w), 0), hide)}</b></div>` : ''}<div class="wgrid">${ws.map(card).join('')}</div>`).join('')
-      : `<div class="thead"><span>Nama</span><span>Saldo</span><span>Bulan ini</span></div>${groups.map(([l, c, ws]) => `${l ? `<div class="ghead"><span><i style="background:${c}"></i>${l}</span><b class="num">${rp(ws.reduce((a, w) => a + walletBalance(w), 0), hide)}</b></div>` : ''}${ws.map(row).join('')}`).join('')}`}
+      ${ui.wview === 'grid' ? groups.map(([l, c, ws]) => `${l ? `<div class="ghead"><span><i style="background:${c}"></i>${l}</span><b class="num">${rp(ws.reduce((a, w) => a + walletBalance(w), 0), 'bal')}</b></div>` : ''}<div class="wgrid">${ws.map(card).join('')}</div>`).join('')
+      : `<div class="thead"><span>Nama</span><span>Saldo</span><span>Bulan ini</span></div>${groups.map(([l, c, ws]) => `${l ? `<div class="ghead"><span><i style="background:${c}"></i>${l}</span><b class="num">${rp(ws.reduce((a, w) => a + walletBalance(w), 0), 'bal')}</b></div>` : ''}${ws.map(row).join('')}`).join('')}`}
       <button class="btn sec" data-act="addwallet" style="margin-top:18px">Tambah dompet</button>`;
   } else if (ui.acct === 'asset') {
     head = `<header class="top center"><span class="hsp"></span><h1>Akun</h1>${settingsBtn}</header>
-      <div class="bignum num">${rp(assetSum(), hide)}</div><div class="cap">Total nilai aset</div>${rangeTabs()}${areaChart(series('asset'))}`;
-    body = S.assets.length ? `<div class="head"><h2 class="h2b big2">Aset</h2></div>${S.assets.map(a => `<button class="wrow two" data-act="editasset" data-id="${a.id}"><span class="wt" style="background:var(--surface-2)">${esc(a.emoji || '💎')}</span><span class="wn"><b>${esc(a.name)}</b><span>${esc(a.note || 'Aset')}</span></span><b class="wb num">${rp(a.value, hide)}</b></button>`).join('')}`
+      <div class="bignum num">${rp(assetSum(), 'bal')}</div><div class="cap">Total nilai aset</div>${rangeTabs()}${areaChart(series('asset'))}`;
+    body = S.assets.length ? `<div class="head"><h2 class="h2b big2">Aset</h2></div>${S.assets.map(a => `<button class="wrow two" data-act="editasset" data-id="${a.id}"><span class="wt" style="background:var(--surface-2)">${esc(a.emoji || '💎')}</span><span class="wn"><b>${esc(a.name)}</b><span>${esc(a.note || 'Aset')}</span></span><b class="wb num">${rp(a.value, 'bal')}</b></button>`).join('')}`
       : `<div class="ecard"><span class="eill">🏡</span><span><b>Belum ada aset</b><span>Catat investasi, emas, atau barang berharga</span></span></div>`;
   } else {
     head = `<header class="top"><h1>Akun</h1>${settingsBtn}</header>
@@ -970,7 +1033,7 @@ function acctMenu() {
     <button class="set-row" data-act="addwallet"><span class="ic">👛</span><span class="mid"><b>Tambah dompet</b></span>${I.chev}</button>
     <button class="set-row" data-act="addasset"><span class="ic">💎</span><span class="mid"><b>Tambah aset</b></span>${I.chev}</button>
     <button class="set-row" data-act="adddebt"><span class="ic">🤝</span><span class="mid"><b>Catat utang-piutang</b></span>${I.chev}</button>
-    <button class="set-row" data-act="hide"><span class="ic">${S.settings.hide ? '🙈' : '👀'}</span><span class="mid"><b>Sembunyikan nominal</b></span><span class="switch ${S.settings.hide ? 'on' : ''}"></span></button></div>`);
+    <button class="set-row" data-act="hide"><span class="ic">${S.settings.hide ? '🙈' : '👀'}</span><span class="mid"><b>Sembunyikan saldo</b></span><span class="switch ${S.settings.hide ? 'on' : ''}"></span></button></div>`);
 }
 
 /* ---------- settings ---------- */
@@ -988,7 +1051,7 @@ function viewSet() {
     </div>
     <div class="set-title">Tampilan</div>
     <div class="sgroup">
-      ${row('hide', '🔒', 'Sembunyikan nominal', 'Tutupi angka saat dilihat orang lain', `<span class="switch ${S.settings.hide ? 'on' : ''}" role="switch" aria-checked="${!!S.settings.hide}"></span>`)}
+      ${row('hide', '🔒', 'Sembunyikan saldo', 'Tutupi saldo saat ini. Pemasukan dan pengeluaran tetap terlihat', `<span class="switch ${S.settings.hide ? 'on' : ''}" role="switch" aria-checked="${!!S.settings.hide}"></span>`)}
       <div class="set-row" style="cursor:default"><span class="ic">🌗</span><span class="mid"><b>Tema</b><div class="seg" style="margin-top:8px">${[['auto','Otomatis'],['light','Terang'],['dark','Gelap']].map(([k, l]) => `<button class="${theme === k ? 'on' : ''}" data-act="theme" data-k="${k}">${l}</button>`).join('')}</div></span></div>
     </div>
     <div class="set-title">Privasi & Data</div>
@@ -1020,12 +1083,50 @@ function toast(msg) { const t = document.createElement('div'); t.className = 'to
 
 /* ---------- sheets ---------- */
 function sheet(html, onMount) {
-  $('#layer').innerHTML = `<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`;
-  $('#scrim').addEventListener('click', e => { if (e.target.id === 'scrim') closeSheet(); });
+  $('#layer').innerHTML = `<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true"><div class="sheet-top"><div class="grab"></div><button type="button" class="sheet-x" aria-label="Tutup">${sv('<path d="M6 6l12 12M18 6L6 18"/>', 2.6)}</button></div>${html}</div></div>`;
+  $('#scrim').addEventListener('click', e => { if (e.target.id === 'scrim') dismissSheet(); });
+  $('#layer .sheet-x').onclick = dismissSheet;
+  dragToClose($('#layer .sheet'));
   onMount && onMount($('#layer .sheet'));
   const f = $('#layer [autofocus]'); f && setTimeout(() => f.focus(), 60);
 }
 const closeSheet = () => $('#layer').innerHTML = '';
+function dismissSheet() {
+  const sh = $('#layer .sheet'), sc = $('#scrim'); if (!sh) return;
+  document.activeElement && document.activeElement.blur && document.activeElement.blur();
+  sh.style.transition = 'transform .22s cubic-bezier(.2,.8,.2,1)'; sh.style.transform = 'translateY(100%)';
+  sc.style.transition = 'background .22s'; sc.style.background = 'rgba(0,0,0,0)';
+  setTimeout(() => { if ($('#layer .sheet') === sh) closeSheet(); }, 210);
+}
+// swipe the sheet down to close: from the handle area anytime, from the content when it is scrolled to the top
+function dragToClose(sh) {
+  const sc = $('#scrim'); let y0 = null, x0 = 0, dy = 0, t0 = 0, dragging = false, fromTop = false;
+  sh.addEventListener('touchstart', e => {
+    const t = e.target;
+    fromTop = !!t.closest('.sheet-top');
+    if (!fromTop && (sh.scrollTop > 0 || t.closest('.tpl,.wchips,.emo,textarea'))) { y0 = null; return; }
+    y0 = e.touches[0].clientY; x0 = e.touches[0].clientX; dy = 0; t0 = Date.now(); dragging = false;
+  }, {passive: true});
+  sh.addEventListener('touchmove', e => {
+    if (y0 === null) return;
+    const d = e.touches[0].clientY - y0, dx = Math.abs(e.touches[0].clientX - x0);
+    if (!dragging) {
+      if (d > 8 && d > dx && (fromTop || sh.scrollTop <= 0)) { dragging = true; sh.style.transition = 'none'; const a = document.activeElement; if (a && a.blur && a !== document.body) a.blur(); }
+      else { if (d < -4 || dx > 8) y0 = null; return; }
+    }
+    e.preventDefault();
+    dy = Math.max(0, d); sh.style.transform = `translateY(${dy}px)`;
+    sc.style.background = `rgba(0,0,0,${(.45 * (1 - Math.min(1, dy / 420))).toFixed(3)})`;
+  }, {passive: false});
+  const end = () => {
+    if (!dragging) { y0 = null; return; }
+    const v = dy / Math.max(1, Date.now() - t0);
+    dragging = false; y0 = null;
+    if (dy > 110 || (v > .55 && dy > 30)) dismissSheet();
+    else { sh.style.transition = 'transform .22s cubic-bezier(.2,.8,.2,1)'; sh.style.transform = ''; sc.style.background = ''; }
+  };
+  sh.addEventListener('touchend', end); sh.addEventListener('touchcancel', end);
+}
 function moneyInput(el) {
   el.setAttribute('inputmode', 'decimal'); el.setAttribute('autocomplete', 'off');
   const hint = document.createElement('div'); hint.className = 'calc'; el.after(hint);
@@ -1070,14 +1171,18 @@ function txSheet(existing, type = 'expense') {
       ${freq.length ? `<div class="field"><label>Sering dicatat</label><div class="tpl">${freq.map((f, i) => `<button data-tpl="${i}">${cat(f.categoryId).emoji} ${esc(f.note || cat(f.categoryId).name)} · ${short(f.amount)}</button>`).join('')}</div></div>` : ''}
       <div class="field"><label for="f-amt">Jumlah</label><input id="f-amt" class="inp amount-inp num" placeholder="Rp0" value="${esc(amtText)}" autofocus>${opsRow('f-amt')}</div>
       ${t.type !== 'transfer' ? `<div class="field"><label>Kategori</label><div class="cats">${cats.map(c => `<button class="${c.id===t.categoryId?'on':''}" data-cat="${c.id}"><span>${c.emoji}</span>${esc(c.name)}</button>`).join('')}</div></div>` : ''}
-      <div class="row2"><div class="field"><label for="f-w">${t.type==='transfer'?'Dari':'Dompet'}</label><select id="f-w" class="inp">${S.wallets.map(w => `<option value="${w.id}" ${w.id===t.walletId?'selected':''}>${esc(w.name)}</option>`).join('')}</select></div>
-      ${t.type==='transfer' ? `<div class="field"><label for="f-w2">Ke</label><select id="f-w2" class="inp">${S.wallets.map(w => `<option value="${w.id}" ${w.id===t.toWalletId?'selected':''}>${esc(w.name)}</option>`).join('')}</select></div>` : `<div class="field"><label for="f-d">Tanggal</label><input id="f-d" type="date" class="inp" value="${t.date}"></div>`}</div>
-      ${t.type==='transfer' ? `<div class="field"><label for="f-d">Tanggal</label><input id="f-d" type="date" class="inp" value="${t.date}"></div>` : ''}
+      <div class="field"><label>${t.type==='transfer'?'Dari dompet':'Dompet'}</label><input type="hidden" id="f-w" value="${t.walletId || ''}"><div class="wchips" data-for="f-w">${S.wallets.map(w => `<button type="button" class="${w.id===t.walletId?'on':''}" data-wid="${w.id}">${walletTile(w, 'sm')}<span>${esc(w.name)}</span></button>`).join('')}</div></div>
+      ${t.type==='transfer' ? `<div class="field"><label>Ke dompet</label><input type="hidden" id="f-w2" value="${t.toWalletId || ''}"><div class="wchips" data-for="f-w2">${S.wallets.map(w => `<button type="button" class="${w.id===t.toWalletId?'on':''}" data-wid="${w.id}">${walletTile(w, 'sm')}<span>${esc(w.name)}</span></button>`).join('')}</div></div>` : ''}
+      <div class="field"><label for="f-d">Tanggal</label><input id="f-d" type="date" class="inp" value="${t.date}"></div>
       <div class="field"><label for="f-n">Catatan</label><input id="f-n" class="inp" placeholder="Misalnya: nasi padang" value="${esc(t.note)}" maxlength="80"></div>
       ${t.type !== 'transfer' ? `<label class="set-row check"><span class="ic">🏪</span><span class="mid"><b>Transaksi usaha</b><div class="s">Masuk laporan untung-rugi toko, terpisah dari uang pribadi</div></span><input id="f-biz" type="checkbox" ${t.biz?'checked':''}></label>` : ''}
       <button class="btn" id="f-save">${existing ? 'Simpan perubahan' : 'Simpan'}</button>
       ${existing ? '<button class="btn ghost" id="f-del">Hapus transaksi</button>' : ''}`, root => {
       const amt = root.querySelector('#f-amt'); moneyInput(amt); wireOps(root);
+      root.querySelectorAll('.wchips').forEach(row => row.querySelectorAll('[data-wid]').forEach(b => b.onclick = () => {
+        root.querySelector('#' + row.dataset.for).value = b.dataset.wid;
+        row.querySelectorAll('[data-wid]').forEach(y => y.classList.toggle('on', y === b));
+      }));
       const grab = () => { amtText = amt.value; t.amount = amt0(amt.value); t.walletId = root.querySelector('#f-w').value; const w2 = root.querySelector('#f-w2'); if (w2) t.toWalletId = w2.value; t.date = root.querySelector('#f-d').value || today(); t.note = root.querySelector('#f-n').value.trim(); const bz = root.querySelector('#f-biz'); if (bz) t.biz = bz.checked; };
       root.querySelectorAll('[data-type]').forEach(b => b.onclick = () => { grab(); t.type = b.dataset.type; draw(); });
       root.querySelectorAll('[data-tpl]').forEach(b => b.onclick = () => { const f = freq[+b.dataset.tpl]; grab(); Object.assign(t, {amount:f.amount, categoryId:f.categoryId, note:f.note || '', walletId: wal(f.walletId) ? f.walletId : t.walletId, biz:!!f.biz}); amtText = f.amount.toLocaleString('id-ID'); draw(); });
@@ -1110,24 +1215,53 @@ function txSheet(existing, type = 'expense') {
 function walletSheet(w) {
   const x = w ? {...w} : {name:'', type:'bank', initial:0};
   const used = w && S.tx.some(t => t.walletId === w.id || t.toWalletId === w.id);
+  let source = x.logoSrc || x.logo || null;
   sheet(`<h3>${w ? 'Ubah dompet' : 'Dompet baru'}</h3>
-    <div class="field"><label for="w-n">Nama</label><input id="w-n" class="inp" placeholder="Misalnya: BRI, GoPay" value="${esc(x.name)}" autofocus maxlength="30"></div>
-    <div class="field"><label>Jenis</label><div class="seg">${Object.entries(WTYPES).map(([k,t]) => `<button class="${x.type===k?'on':''}" data-wt="${k}">${t.emoji} ${t.label}</button>`).join('')}</div></div>
-    <div class="field"><label for="w-b">${w ? 'Saldo awal' : 'Saldo saat ini'}</label><input id="w-b" class="inp num" inputmode="numeric" placeholder="Rp0" value="${x.initial ? Number(x.initial).toLocaleString('id-ID') : ''}"></div>
-    ${w ? `<p class="muted" style="font-size:12.5px;margin:8px 2px 0">Saldo sekarang ${rp(walletBalance(w))}. Kalau beda dengan saldo asli di m-banking atau dompet, pakai Sesuaikan saldo.</p><button class="btn sec" id="w-adj" type="button" style="margin-top:12px">⚖️ Sesuaikan saldo</button>` : ''}
+    <div class="logo-edit"><span id="w-prev">${walletTile(x, 'lg')}</span>
+      <div class="logo-btns"><label class="btn sec small">🖼️ Pilih logo<input id="w-file" type="file" accept="image/*" hidden></label>
+      <button type="button" id="w-rm" class="linkbtn" ${x.logo ? '' : 'hidden'}>Hapus logo</button></div></div>
+    <div id="w-fit" class="seg" style="margin-top:12px" ${x.logo ? '' : 'hidden'}><button type="button" data-fit="cover" class="${x.logoFit !== 'contain' ? 'on' : ''}">Penuh</button><button type="button" data-fit="contain" class="${x.logoFit === 'contain' ? 'on' : ''}">Pas di tengah</button></div>
+    <div id="w-cols" ${x.logo ? 'hidden' : ''}><div class="colors" style="margin-top:12px">${TILE_COLORS.map(k => `<button type="button" class="${x.color === k ? 'on' : ''}" data-tc="${k}" style="background:${k}" aria-label="Warna"></button>`).join('')}</div></div>
+    <p class="muted" style="font-size:12.5px;margin:10px 2px 0">Tips: screenshot ikon aplikasi m-banking atau e-wallet-mu, lalu pilih di sini. Logo hanya tersimpan di HP-mu.</p>
+    <div class="field"><label for="w-n">Nama</label><input id="w-n" class="inp" placeholder="Misalnya: BRI, GoPay" value="${esc(x.name)}" maxlength="30"></div>
+    <div class="field"><label>Jenis</label><div class="seg">${Object.entries(WTYPES).map(([k,t]) => `<button type="button" class="${x.type===k?'on':''}" data-wt="${k}">${t.emoji} ${t.label}</button>`).join('')}</div></div>
+    <div class="field"><label for="w-b">${w ? 'Saldo awal (sebelum mulai dicatat)' : 'Saldo saat ini'}</label><input id="w-b" class="inp num" placeholder="Rp0" value="${x.initial ? Number(x.initial).toLocaleString('id-ID') : ''}"></div>
+    ${w ? `<div class="field"><label>Asal saldo dompet ini</label>${breakdownRows((r => ({...r, start: r.opening}))(breakdown(w.id, null, null)), 'Saldo awal', 'Saldo sekarang')}</div><p class="muted" style="font-size:12.5px;margin:8px 2px 0">Kalau saldo sekarang beda dengan saldo asli di m-banking atau dompet, pakai Sesuaikan saldo. Jangan ubah saldo awal untuk koreksi, supaya catatannya tetap jujur.</p><button class="btn sec" id="w-adj" type="button" style="margin-top:12px">⚖️ Sesuaikan saldo</button>` : ''}
     <button class="btn" id="w-save">Simpan</button>${w && S.wallets.length > 1 ? `<button class="btn ghost" id="w-del">${used ? 'Hapus dompet dan transaksinya' : 'Hapus dompet'}</button>` : ''}`, root => {
     moneyInput(root.querySelector('#w-b'));
-    const adj = root.querySelector('#w-adj'); if (adj) adj.onclick = () => adjustSheet(w);
-    root.querySelectorAll('[data-wt]').forEach(b => b.onclick = () => { x.type = b.dataset.wt; root.querySelectorAll('[data-wt]').forEach(y => y.classList.toggle('on', y === b)); });
-    root.querySelector('#w-save').onclick = () => {
-      x.name = root.querySelector('#w-n').value.trim(); x.initial = amt0(root.querySelector('#w-b').value);
+    const $r = q => root.querySelector(q);
+    const refresh = () => {
+      $r('#w-prev').innerHTML = walletTile({...x, name: $r('#w-n').value || x.name}, 'lg');
+      $r('#w-rm').hidden = !x.logo; $r('#w-fit').hidden = !x.logo; $r('#w-cols').hidden = !!x.logo;
+    };
+    $r('#w-n').addEventListener('input', () => { if (!x.logo) refresh(); });
+    $r('#w-file').onchange = async e => {
+      const f = e.target.files[0]; if (!f) return;
+      try {
+        source = await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(f); });
+        x.logoFit = x.logoFit || 'cover'; source = await shrinkSource(source); x.logoSrc = source; x.logo = await makeLogo(source, x.logoFit);
+        refresh();
+      } catch { toast('Gambar tidak bisa dibuka'); }
+      e.target.value = '';
+    };
+    root.querySelectorAll('[data-fit]').forEach(b => b.onclick = async () => {
+      x.logoFit = b.dataset.fit; root.querySelectorAll('[data-fit]').forEach(y => y.classList.toggle('on', y === b));
+      if (source) { x.logo = await makeLogo(source, x.logoFit); refresh(); }
+    });
+    $r('#w-rm').onclick = () => { delete x.logo; delete x.logoSrc; delete x.logoFit; source = null; refresh(); };
+    root.querySelectorAll('[data-tc]').forEach(b => b.onclick = () => { x.color = b.dataset.tc; root.querySelectorAll('[data-tc]').forEach(y => y.classList.toggle('on', y === b)); refresh(); });
+    const adj = $r('#w-adj'); if (adj) adj.onclick = () => adjustSheet(w);
+    root.querySelectorAll('[data-wt]').forEach(b => b.onclick = () => { x.type = b.dataset.wt; root.querySelectorAll('[data-wt]').forEach(y => y.classList.toggle('on', y === b)); refresh(); });
+    $r('#w-save').onclick = () => {
+      x.name = $r('#w-n').value.trim(); x.initial = amt0($r('#w-b').value);
       if (!x.name) { toast('Beri nama dompetnya'); return; }
       if (w) S.wallets = S.wallets.map(y => y.id === w.id ? x : y); else S.wallets.push({...x, id: uid()});
       persist(); closeSheet(); render(); toast('Dompet disimpan');
     };
-    const del = root.querySelector('#w-del'); if (del) del.onclick = () => { if (confirm(`Hapus ${w.name}${used ? ' beserta semua transaksinya' : ''}?`)) { S.wallets = S.wallets.filter(y => y.id !== w.id); S.tx = S.tx.filter(t => t.walletId !== w.id && t.toWalletId !== w.id); if (ui.wallet === w.id) ui.wallet = 'all'; persist(); closeSheet(); render(); } };
+    const del = $r('#w-del'); if (del) del.onclick = () => { if (confirm(`Hapus ${w.name}${used ? ' beserta semua transaksinya' : ''}?`)) { S.wallets = S.wallets.filter(y => y.id !== w.id); S.tx = S.tx.filter(t => t.walletId !== w.id && t.toWalletId !== w.id); if (ui.wallet === w.id) ui.wallet = 'all'; persist(); closeSheet(); render(); } };
   });
 }
+
 function assetSheet(a) {
   const x = a ? {...a} : {name:'', value:0, emoji:'💎', note:''};
   const EM = ['💎','🪙','🏦','💻','📱','🛵','🚗','🏠','📈','📷'];
@@ -1407,7 +1541,7 @@ function bizView() {
     const h = Math.max(2, Math.abs(x.p) / max * 52), cx = k * gap + gap / 2, sel = x.m === ui.month;
     const y = x.p >= 0 ? mid - h : mid;
     return `<g opacity="${sel ? 1 : .55}"><rect x="${cx - bw / 2}" y="${y}" width="${bw}" height="${h}" rx="6" fill="${x.p >= 0 ? 'var(--sage)' : 'var(--red)'}"/>
-      ${x.p ? `<text x="${cx}" y="${x.p >= 0 ? y - 6 : y + h + 13}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">${hide ? '•' : short(x.p)}</text>` : ''}
+      ${x.p ? `<text x="${cx}" y="${x.p >= 0 ? y - 6 : y + h + 13}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--muted)">${short(x.p)}</text>` : ''}
       <text x="${cx}" y="154" text-anchor="middle" font-size="11" font-weight="${sel ? 700 : 500}" fill="${sel ? 'var(--text)' : 'var(--muted)'}">${MONTHS[+x.m.slice(5) - 1]}</text></g>`;
   }).join('');
   return `<div class="card"><div class="muted" style="font-size:14px">Laba bersih toko ${ymLabel(ui.month)}</div>
@@ -1470,6 +1604,54 @@ async function installSheet() {
   else body = `<ol class="steps"><li><span>Ketuk menu <span class="kbd">⋮</span> di pojok kanan atas Chrome.</span></li><li><span>Pilih <span class="kbd">Instal aplikasi</span> atau <span class="kbd">Tambahkan ke layar utama</span>.</span></li><li><span>Ketuk <span class="kbd">Instal</span>, lalu buka Dompetku dari layar utama.</span></li></ol>`;
   sheet(`<div style="display:flex;align-items:center;gap:14px;margin-bottom:6px"><img src="icons/icon-192.png" alt="" style="width:56px;height:56px;border-radius:13px"><div><h3 style="margin:0">Pasang Dompetku</h3><div class="muted" style="font-size:13.5px">Gratis, tanpa App Store</div></div></div>${body}${warn}`, root => {
     const cp = root.querySelector('#cp-url'); if (cp) cp.onclick = async () => { try { await navigator.clipboard.writeText(location.href); toast('Alamat disalin'); } catch { toast(location.href); } };
+  });
+}
+/* ---------- balance breakdown (transparency) ---------- */
+function breakdown(wid, from, to) {
+  const inSet = id => wid === 'all' ? S.wallets.some(w => w.id === id) : id === wid;
+  const opening = S.wallets.filter(w => wid === 'all' || w.id === wid).reduce((a, w) => a + (Number(w.initial) || 0), 0);
+  const r = {opening, start: opening, inc: 0, exp: 0, tin: 0, tout: 0, adj: 0, n: 0};
+  for (const t of S.tx) {
+    let inc = 0, exp = 0, tin = 0, tout = 0, adj = 0;
+    if (t.type === 'income' && inSet(t.walletId)) inc = t.amount;
+    else if (t.type === 'expense' && inSet(t.walletId)) exp = t.amount;
+    else if (t.type === 'adjust' && inSet(t.walletId)) adj = t.amount;
+    else if (t.type === 'transfer') { const a = inSet(t.walletId), b = inSet(t.toWalletId); if (a && !b) tout = t.amount; if (b && !a) tin = t.amount; }
+    const eff = inc - exp + tin - tout + adj;
+    if (from && t.date < from) r.start += eff;
+    else if (!to || t.date <= to) { r.inc += inc; r.exp += exp; r.tin += tin; r.tout += tout; r.adj += adj; if (eff || t.type === 'transfer') r.n++; }
+  }
+  r.end = r.start + r.inc - r.exp + r.tin - r.tout + r.adj;
+  return r;
+}
+function monthRange(ym) { const [y, m] = ym.split('-').map(Number); return [`${ym}-01`, `${ym}-${pad(new Date(y, m, 0).getDate())}`]; }
+function breakdownRows(r, startLabel, endLabel) {
+  const hide = S.settings.hide, line = (lbl, v, cls = '', sign = '', note = '', bal = false) => `<div class="bd-row"><span>${lbl}${note ? `<small>${note}</small>` : ''}</span><b class="num ${cls}">${sign}${rp(Math.abs(v), bal ? 'bal' : 0)}</b></div>`;
+  return `<div class="bd">
+    ${line(startLabel, r.start, 'bd-base', r.start < 0 ? '-' : '', 'Uang yang sudah ada sebelumnya', true)}
+    <div class="bd-sep"></div>
+    ${line('Pemasukan', r.inc, 'pos', '+')}
+    ${line('Pengeluaran', r.exp, 'neg', '−')}
+    ${r.tin || r.tout ? line('Transfer masuk', r.tin, '', '+') + line('Transfer keluar', r.tout, '', '−') : ''}
+    ${r.adj ? line('Penyesuaian saldo', r.adj, 'muted', r.adj > 0 ? '+' : '−', 'Koreksi agar sama dengan saldo asli') : ''}
+    <div class="bd-total"><span>${endLabel}</span><b class="num">${r.end < 0 ? '-' : ''}${rp(Math.abs(r.end), 'bal')}</b></div></div>`;
+}
+function breakdownSheet(mode) {
+  mode = mode || 'month';
+  const wid = ui.wallet, cur = ymOf(today()), [a, b] = monthRange(ui.month);
+  const wname = wid === 'all' ? 'Semua dompet' : esc(wal(wid)?.name || '');
+  const firstDay = `1 ${MONTHS[+ui.month.slice(5) - 1]}`, lastDay = `${+b.slice(8)} ${MONTHS[+ui.month.slice(5) - 1]}`;
+  const r = mode === 'month' ? breakdown(wid, a, b) : breakdown(wid, null, null);
+  const body = mode === 'month'
+    ? breakdownRows(r, `Saldo awal ${firstDay}`, ui.month === cur ? 'Saldo sekarang' : `Saldo akhir ${lastDay}`)
+    : breakdownRows({...r, start: r.opening}, 'Saldo awal dompet', 'Saldo sekarang');
+  const perWallet = S.wallets.filter(w => wid === 'all' || w.id === wid).map(w => `<div class="bd-w">${walletTile(w, 'sm')}<span class="nm">${esc(w.name)}</span><span class="num muted">${rp(Number(w.initial) || 0, 'bal')}</span><span class="ar">→</span><b class="num">${rp(walletBalance(w), 'bal')}</b></div>`).join('');
+  sheet(`<h3>Rincian saldo</h3><div class="muted" style="margin:-8px 0 12px;font-size:14px">${wname}</div>
+    <div class="seg"><button class="${mode === 'month' ? 'on' : ''}" data-bm="month">${MONTHS_FULL[+ui.month.slice(5) - 1]} ${ui.month.slice(0, 4)}</button><button class="${mode === 'all' ? 'on' : ''}" data-bm="all">Sejak awal</button></div>
+    ${body}
+    <p class="muted" style="font-size:13px;line-height:1.5;margin:14px 2px 0">${mode === 'month' ? 'Saldo awal bulan adalah uang yang sudah ada di tanggal 1. Pemasukan dan pengeluaran hanya dari transaksi yang kamu catat bulan ini.' : 'Saldo awal dompet adalah uang yang sudah ada sebelum kamu mulai mencatat, misalnya hasil impor atau saat dompet dibuat. Sisanya berasal dari transaksi yang tercatat.'} Transfer antardompet dan penyesuaian saldo tidak dihitung sebagai pemasukan atau pengeluaran.</p>
+    ${mode === 'all' ? `<div class="eyebrow" style="margin:18px 2px 6px">Per dompet · saldo awal → sekarang</div>${perWallet}` : ''}`, root => {
+    root.querySelectorAll('[data-bm]').forEach(x => x.onclick = () => breakdownSheet(x.dataset.bm));
   });
 }
 function paydaySheet() {
@@ -1584,6 +1766,7 @@ document.addEventListener('click', e => {
   else if (a === 'editasset') assetSheet(S.assets.find(x => x.id === b.dataset.id));
   else if (a === 'editdebt') debtSheet(S.debts.find(x => x.id === b.dataset.id));
   else if (a === 'payday') paydaySheet();
+  else if (a === 'breakdown') breakdownSheet();
   else if (a === 'later') { S.settings[b.dataset.k] = b.dataset.k === 'backupLater' ? today() : true; persist(); render(); }
   else if (a === 'trend') { ui.trendBars = b.dataset.k === '1'; render(); }
   else if (a === 'range') { ui.range = b.dataset.k; render(); }
@@ -1618,7 +1801,7 @@ document.addEventListener('click', e => {
   else if (a === 'erase') { if (confirm('Hapus semua transaksi, dompet, aset, dan utang? Tindakan ini tidak bisa dibatalkan.')) { S = fresh(); persist(); render(); toast('Semua data dihapus'); } }
 });
 document.addEventListener('change', e => { if (e.target.dataset.act === 'wallet') { ui.wallet = e.target.value; render(); } });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') dismissSheet(); });
 $('#fab').onclick = () => {
   if (ui.tab === 'acct' && ui.acct === 'wallet') walletSheet();
   else if (ui.tab === 'acct' && ui.acct === 'asset') assetSheet();

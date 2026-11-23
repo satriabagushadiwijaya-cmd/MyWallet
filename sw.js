@@ -1,5 +1,5 @@
 // Ganti angka versi setiap kali kamu mengubah file aplikasi, supaya HP mengambil versi terbaru.
-const VERSION = 'dompetku-v4';
+const VERSION = 'dompetku-v8';
 const FILES = [
   './', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/icon-maskable-512.png',
